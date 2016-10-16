@@ -1,4 +1,5 @@
 from PyQt4 import QtGui,QtCore,uic
+from dbImporter import dbImporter
 
 class mainWindow(QtGui.QMainWindow):
     #init main window
