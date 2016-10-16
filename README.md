@@ -12,4 +12,4 @@ Make sure you install following libraries:
 -Pymongo
 -cassandra
 
-For optimal use, install anaconda workstation.
+For optimal use, install anaconda workstation. Here is the link: https://www.continuum.io/downloads
