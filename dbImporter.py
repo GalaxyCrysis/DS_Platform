@@ -8,6 +8,9 @@ from pandas.io.sql import DatabaseError
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure
 from pymongo.errors import CursorNotFound
+from pgdb import connect
+from pgdb import _db_error
+
 
 class dbImporter(QtGui.QDialog):
     def __init__(self):
@@ -53,6 +56,7 @@ class dbImporter(QtGui.QDialog):
             except Error as err:
                 self.dataframe = "Error: "+str(err)
 
+        #get data from MongoDB database
         elif db == "MongoDB":
             try:
                 # connect with database
@@ -63,14 +67,14 @@ class dbImporter(QtGui.QDialog):
                     client = MongoClient(host, port)
 
                 # get database
-                db = client[database]
+                dbase = client[database]
                 #fetch the data and put it into a pandas dataframe
                 try:
                    if statement == "":
-                      cursor = db[table].find()
+                      cursor = dbase[table].find()
 
                    else:
-                      cursor = db[table].find(statement)
+                      cursor = dbase[table].find(statement)
 
                    self.dataframe = pd.DataFrame(list(cursor))
                    del(self.dataframe["_id"])
@@ -79,6 +83,22 @@ class dbImporter(QtGui.QDialog):
                     self.dataframe = "Error: "+ str(err)
 
             except ConnectionFailure as err:
+                self.dataframe = "Error: " + str(err)
+
+        #get data from PostgreSQL database
+        elif db == "PostgreSQL":
+            try:
+                pygrehost = host + ":" + port
+                conn = connect(database=database,host=pygrehost,user=user,password=password)
+                try:
+                    if statement == "":
+                        self.dataframe = pd.read_sql("SELECT * FROM " + table, con=conn)
+                    else:
+                        self.dataframe = pd.read_sql(statement, con=conn)
+                except DatabaseError as err:
+                    self.dataframe = "Error: " + str(err)
+
+            except _db_error as err:
                 self.dataframe = "Error: " + str(err)
 
 
