@@ -5,6 +5,9 @@ from mysql.connector import Error
 import mysql.connector
 import pandas as pd
 from pandas.io.sql import DatabaseError
+from pymongo import MongoClient
+from pymongo.errors import ConnectionFailure
+from pymongo.errors import CursorNotFound
 
 class dbImporter(QtGui.QDialog):
     def __init__(self):
@@ -49,6 +52,35 @@ class dbImporter(QtGui.QDialog):
 
             except Error as err:
                 self.dataframe = "Error: "+str(err)
+
+        elif db == "MongoDB":
+            try:
+                # connect with database
+                if user and password:
+                    mongo_uri = "mongodb://%s:%s@%s:%s/%s" % (user, password, host, port, database)
+                    client = MongoClient(mongo_uri)
+                else:
+                    client = MongoClient(host, port)
+
+                # get database
+                db = client[database]
+                #fetch the data and put it into a pandas dataframe
+                try:
+                   if statement == "":
+                      cursor = db[table].find()
+
+                   else:
+                      cursor = db[table].find(statement)
+
+                   self.dataframe = pd.DataFrame(list(cursor))
+                   del(self.dataframe["_id"])
+
+                except CursorNotFound as err:
+                    self.dataframe = "Error: "+ str(err)
+
+            except ConnectionFailure as err:
+                self.dataframe = "Error: " + str(err)
+
 
         self.dataBrowser.setText(str(self.dataframe))
         self.dfName = table
