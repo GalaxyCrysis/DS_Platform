@@ -8,8 +8,10 @@ from pandas.io.sql import DatabaseError
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure
 from pymongo.errors import CursorNotFound
-from pgdb import connect
-from pgdb import _db_error
+
+from cassandra.cluster import Cluster
+from cassandra.query import dict_factory
+from cassandra import DriverException
 
 
 class dbImporter(QtGui.QDialog):
@@ -48,6 +50,7 @@ class dbImporter(QtGui.QDialog):
                             self.dataframe = pd.read_sql("SELECT * FROM " + table, con=conn)
                         else:
                             self.dataframe = pd.read_sql(statement, con=conn)
+                        conn.shutdown()
                     except DatabaseError as err:
                         self.dataframe = "Error: "+ str(err)
 
@@ -78,6 +81,8 @@ class dbImporter(QtGui.QDialog):
 
                    self.dataframe = pd.DataFrame(list(cursor))
                    del(self.dataframe["_id"])
+                   cursor.close()
+                   client.close()
 
                 except CursorNotFound as err:
                     self.dataframe = "Error: "+ str(err)
@@ -89,17 +94,36 @@ class dbImporter(QtGui.QDialog):
         elif db == "PostgreSQL":
             try:
                 pygrehost = host + ":" + port
-                conn = connect(database=database,host=pygrehost,user=user,password=password)
+                conn = "connect(database=database,host=pygrehost,user=user,password=password)"
                 try:
                     if statement == "":
                         self.dataframe = pd.read_sql("SELECT * FROM " + table, con=conn)
                     else:
                         self.dataframe = pd.read_sql(statement, con=conn)
+
                 except DatabaseError as err:
                     self.dataframe = "Error: " + str(err)
 
-            except _db_error as err:
-                self.dataframe = "Error: " + str(err)
+            except  :
+                self.dataframe = "Error: cannot connect to the database"
+
+        #get data from a cassandar cluster
+        if db == "Cassandra":
+            cluster_list = host.split(" ")
+            cluster = Cluster(cluster_list,port=port,protocol_version=3)
+            try:
+                session = cluster.connect()
+                session.row_factory = dict_factory
+                if statement == "":
+                    rows = session.execute("SELECT * FROM " + table)
+                else:
+                    rows = session.execute(statement)
+                self.dataframe = pd.DataFrame(list(rows))
+                session.shutdown()
+
+
+            except DriverException as err:
+                print("Error: " + str(err))
 
 
         self.dataBrowser.setText(str(self.dataframe))

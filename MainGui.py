@@ -1,6 +1,6 @@
 from PyQt4 import QtGui,QtCore,uic
 from dbImporter import dbImporter
-
+from fileImporter import fileImporter
 class mainWindow(QtGui.QMainWindow):
     #init main window
     def __init__(self):
@@ -30,7 +30,8 @@ class mainWindow(QtGui.QMainWindow):
             self.dataList.append(dataframe)
 
     def importFile(self):
-        print("")
+        importer = fileImporter()
+        importer.exec()
 
 
 
