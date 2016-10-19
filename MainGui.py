@@ -1,6 +1,8 @@
 from PyQt4 import QtGui,QtCore,uic
 from dbImporter import dbImporter
 from fileImporter import fileImporter
+
+
 class mainWindow(QtGui.QMainWindow):
     #init main window
     def __init__(self):
@@ -10,8 +12,8 @@ class mainWindow(QtGui.QMainWindow):
         #init variables
         self.dataList = list()
         self.nameList = list()
+        self.typeList = list()
         self.addMenu()
-
         self.show()
 
     #init the Menu bar for the Gui
@@ -25,13 +27,21 @@ class mainWindow(QtGui.QMainWindow):
         importer.exec()
         #the importer dialog closes when importing data. Then we append the new data to the lists for later use
         if importer.close():
-            name,dataframe = importer.importData()
+            name,dataframe,type = importer.importData()
             self.nameList.append(name)
             self.dataList.append(dataframe)
+            self.typeList.append(type)
 
     def importFile(self):
         importer = fileImporter()
         importer.exec()
+        # the importer dialog closes when importing data. Then we append the new data to the lists for later use
+        if importer.close():
+            name,dataframe,type = importer.importData()
+            self.nameList.append(name)
+            self.dataList.append(dataframe)
+            self.typeList.append(type)
+
 
 
 

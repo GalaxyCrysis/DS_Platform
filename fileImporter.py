@@ -9,6 +9,7 @@ class fileImporter(QtGui.QDialog):
         self.dataframe = ""
         self.dfName = ""
         self.openButton.clicked.connect(self.openFile)
+        self.importButton.clicked.connect(self.importData)
         self.type = ""
         self.show()
 
@@ -23,11 +24,21 @@ class fileImporter(QtGui.QDialog):
         if self.textCheck.isChecked():
             self.dataframe = file.read()
             self.type = "Text"
+        elif self.preprocessCheck.isChecked():
+            self.dataframe = file.read()
+            self.type = "to be preprocessed"
         else:
             split = str(self.splitBox.currentText())
             self.dataframe = pd.read_table(file,sep=split)
-            self.type = "csv"
+            self.type = "table"
         self.dataBrowser.setText(str(self.dataframe))
+
+    def importData(self):
+        self.dfName = self.nameEdit.text()
+        self.close()
+        return (self.dfName,self.dataframe,self.type)
+
+
 
 
 

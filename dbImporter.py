@@ -22,8 +22,10 @@ class dbImporter(QtGui.QDialog):
         #init variables
         self.dfName = ""
         self.dataframe =""
+        self.type = ""
         #connect buttons
         self.getDataButton.clicked.connect(self.getData)
+
 
 
         self.show()
@@ -128,12 +130,13 @@ class dbImporter(QtGui.QDialog):
 
         self.dataBrowser.setText(str(self.dataframe))
         self.dfName = table
+        self.type = "table"
 
     #import data by closing the window
     def importData(self):
         if "Error: " not in self.dataframe:
             self.close()
-            return (self.dfName,self.dataframe)
+            return (self.dfName,self.dataframe,self.type)
 
 
 
