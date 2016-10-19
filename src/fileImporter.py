@@ -5,7 +5,7 @@ import pandas as pd
 class fileImporter(QtGui.QDialog):
     def __init__(self):
         super(fileImporter,self).__init__()
-        uic.loadUi("ui/fileImporter.ui",self)
+        uic.loadUi("../ui/fileImporter.ui",self)
 
         #init variables
         self.dataframe = ""
@@ -32,7 +32,7 @@ class fileImporter(QtGui.QDialog):
         else:
             split = str(self.splitBox.currentText())
             self.dataframe = pd.read_table(file,sep=split)
-            self.type = "dataset"
+            self.type = "Dataset"
         self.dataBrowser.setText(str(self.dataframe))
 
     def importData(self):

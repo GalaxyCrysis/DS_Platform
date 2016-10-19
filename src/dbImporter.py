@@ -18,7 +18,7 @@ class dbImporter(QtGui.QDialog):
     def __init__(self):
         # init dbImporter ui
         super(dbImporter, self).__init__()
-        uic.loadUi("ui/dbImporter.ui", self)
+        uic.loadUi("../ui/dbImporter.ui", self)
         #init variables
         self.dfName = ""
         self.dataframe =""
@@ -130,7 +130,7 @@ class dbImporter(QtGui.QDialog):
 
         self.dataBrowser.setText(str(self.dataframe))
         self.dfName = table
-        self.type = "dataset"
+        self.type = "Dataset"
 
     #import data by closing the window
     def importData(self):
