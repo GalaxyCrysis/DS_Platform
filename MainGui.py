@@ -7,7 +7,7 @@ class mainWindow(QtGui.QMainWindow):
     #init main window
     def __init__(self):
         super(mainWindow,self).__init__()
-        uic.loadUi("main.ui",self)
+        uic.loadUi("ui/main.ui",self)
         self.setWindowTitle("Data Science Platform")
         #init variables
         self.dataList = list()
@@ -22,6 +22,8 @@ class mainWindow(QtGui.QMainWindow):
         importMenu.addAction("Import from Database", self.importDB)
         importMenu.addAction("Import from local File",self.importFile)
 
+
+    #import data from a database
     def importDB(self):
         importer = dbImporter()
         importer.exec()
@@ -32,6 +34,8 @@ class mainWindow(QtGui.QMainWindow):
             self.dataList.append(dataframe)
             self.typeList.append(type)
 
+
+    #import data from a local file
     def importFile(self):
         importer = fileImporter()
         importer.exec()
