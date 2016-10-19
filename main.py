@@ -1,4 +1,4 @@
-from MainGui import mainWindow
+from src.MainGui import mainWindow
 from PyQt4 import QtGui
 import sys
 

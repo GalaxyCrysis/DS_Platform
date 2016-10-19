@@ -1,6 +1,6 @@
 from PyQt4 import QtGui,QtCore,uic
-from dbImporter import dbImporter
-from fileImporter import fileImporter
+from src.dbImporter import dbImporter
+from src.fileImporter import fileImporter
 
 
 class mainWindow(QtGui.QMainWindow):
