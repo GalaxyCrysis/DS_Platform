@@ -1,7 +1,7 @@
 from PyQt4 import QtGui,QtCore,uic
 from src.dbImporter import dbImporter
 from src.fileImporter import fileImporter
-
+from src.processingGui import  PreprocessorGui
 
 class mainWindow(QtGui.QMainWindow):
     #init main window
@@ -34,7 +34,8 @@ class mainWindow(QtGui.QMainWindow):
 
 
     def prepareData(self):
-        print("")
+        preprocesser = PreprocessorGui()
+        preprocesser.exec()
 
     def visualize(self):
         print("")
