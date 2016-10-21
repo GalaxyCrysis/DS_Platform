@@ -20,16 +20,21 @@ class fileImporter(QtGui.QDialog):
     def openFile(self):
         # get file name from f dialog
         file_name = QtGui.QFileDialog.getOpenFileName(self, "Open file", "/home")
+        file_type = str(self.typeBox.currentText())
 
         # open file
         file = open(file_name, "r")
-        if self.textCheck.isChecked():
-            self.dataframe = file.read()
-            self.type = "Text"
-        elif self.preprocessCheck.isChecked():
+
+        if self.preprocessCheck.isChecked():
             self.dataframe = file.read()
             self.type = "to be preprocessed"
-        else:
+        elif file_name == "Text":
+            self.dataframe = file.read()
+            self.type = "Text"
+        elif file_type == "XML":
+            self.dataframe = file
+            self.type = "XML"
+        elif file_type == "CSV":
             split = str(self.splitBox.currentText())
             self.dataframe = pd.read_table(file,sep=split)
             self.type = "Dataset"
