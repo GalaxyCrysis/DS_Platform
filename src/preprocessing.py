@@ -1,8 +1,9 @@
 import pandas as pd
-from lxml import objectify
-from sklearn.preprocessing import Imputer
 import math
 import numpy as np
+from lxml import objectify
+from sklearn.preprocessing import Imputer
+
 
 
 
@@ -22,9 +23,61 @@ def replace(dataframe, old_value, new_value,line=-1):
 
 #deletes a line from a dataframe
 def del_line(dataframe, line):
-    del(dataframe[line])
+    dataframe = dataframe.drop(line)
     return dataframe
 
+#deletes a index of a dataframe
+def del_index(dataframe,index):
+    dataframe = dataframe.drop(dataframe.index[[index]])
+    return dataframe
+
+#delete a variable from a dataframe
+def del_variable(dataframe, variable, index):
+    dataframe = dataframe.drop(variable,index)
+    return dataframe
+
+#aggregate 2 columns and transform them into a new column
+def aggregate(dataframe, first_col,second_col,transform,new_col):
+    if transform == "sum":
+        dataframe[new_col] = dataframe.groupby(first_col)[second_col].transform(np.sum)
+    elif transform == "mean":
+        dataframe[new_col] = dataframe.groupby(first_col)[second_col].transform(np.mean)
+    elif transform == "median":
+        dataframe[new_col] = dataframe.groupby(first_col)[second_col].transform(np.median)
+    elif transform == "var":
+        dataframe[new_col] = dataframe.groupby(first_col)[second_col].transform(np.var)
+    elif transform == "std":
+        dataframe[new_col] = dataframe.groupby(first_col)[second_col].transform(np.std)
+
+#a function for mixing a dataframe
+def mix(dataframe):
+    index = dataframe.index.tolist()
+    np.random.shuffle(index)
+    dataframe = dataframe.ix[index]
+    dataframe = dataframe.reset_index(drop=True)
+    return dataframe
+
+#a function for sorting a dataframe
+def sort(dataframe, columns, ascending):
+    dataframe = dataframe.sort_index(by=columns,ascending=ascending)
+    dataframe = dataframe.reset_index(drop=True)
+    return dataframe
+
+#a function for appending a new column to the dataframe
+def append_column(dataframe, column):
+    dataframe = dataframe.append(column)
+    dataframe = dataframe.reset_index(drop=True)
+    return dataframe
+
+#a function for appending a new row
+def append_last_row(dataframe, new_values):
+    dataframe = dataframe.loc[dataframe.last_valid_index()+1] = new_values
+    return dataframe
+
+#a function for merging 2 dataframes
+def join_df(first_df, second_df):
+    dataframe = pd.DataFrame.join(first_df,second_df)
+    return dataframe
 
 #converts a read file to a dataframe
 def convert_df(file, row_sep, line_sep="\n", columns=None):
@@ -112,6 +165,7 @@ def del_columns(dataframe, column):
 
 
 #imputer function for filling missing values
+#we we input columns we specify the columns with missing values of dataframe which need to be filled
 def impute(dataframe, strategy,axis=0,columns=None):
     if columns and "list"  in str(type(columns)):
         for column in columns:
