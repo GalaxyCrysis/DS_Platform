@@ -3,10 +3,11 @@ import math
 import numpy as np
 from lxml import objectify
 from sklearn.preprocessing import Imputer
+from sklearn.preprocessing import minmax_scale,scale,robust_scale
 import sklearn.feature_extraction.text as txt
 from nltk import word_tokenize
 from nltk.stem.porter import PorterStemmer
-
+from scipy.sparse import csc_matrix
 
 
 #functions for preprocessing data
@@ -256,6 +257,47 @@ def tfidf_transform(text,feature_words):
     else:
         return vectorized_tfidf
 
+#hashes the text and returns it
+def hashing_rick(text):
+    vector = [0] * len(text)
+    for word in text.split(" "):
+        index = abs(hash(word)) % len(text)
+        vector[index] = 1
+    return vector
+
+#transforms the text into a csc matrix and returns the matrix
+def csc_matr(text, hashed=False):
+    if hashed:
+        return csc_matrix(text)
+    else:
+        vector = hashing_rick(text)
+        return csc_matrix(vector)
+
+#creates a count vectorizer and returns the hashed text
+def one_hot_enconding(text):
+    vectorizer = txt.CountVectorizer()
+    one_hot_enconded = vectorizer.fit_transform(text)
+    return one_hot_enconded
+
+#creates a hashing vectorizer and transforms the text
+def hash_vector(text,features):
+    hash_vectorizer = txt.HashingVectorizer(n_features=features,binary=True,norm=None)
+    text_vector = hash_vectorizer.transform(text)
+    return text_vector
+
+
+
+
+###########Transformation#######
+#returns the min and max values of a
+def min_max_scaling(dataframe, range_begin, range_end):
+    return minmax_scale(dataframe,feature_range=(range_begin,range_end))
+#scales the dataframe
+def scaling(dataframe):
+    return scale(dataframe)
+#returns the robust scaling of the dataframe
+def robust_scaling(dataframe,axis=0):
+    return robust_scale(dataframe)
 
 
 
