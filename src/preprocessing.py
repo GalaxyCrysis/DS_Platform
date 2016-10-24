@@ -301,6 +301,46 @@ def robust_scaling(dataframe,axis=0):
 
 
 
+###############FUNCTION FOR TRANSFORMING TEXTS###############
+
+#function for stemming english texts
+def tokenize(text):
+    stemmer = PorterStemmer()
+    stemmed = []
+    # tokenize the text
+    tokens = word_tokenize(text)
+    for item in tokens:
+        stemmed.append(stemmer.stem(item))
+    return stemmed
+
+def stem_text(text):
+    count_vector = txt.CountVectorizer(tokenizer=tokenize, stop_words="english")
+    stemmed_text = count_vector.fit(text)
+    return stemmed_text.get_feature_names()
+
+#n_gram algorithm for extracting the most popular words,chars etc
+def ngram(text,n_begin, n_end, max_features, analyzer="word"):
+    counter = txt.CountVectorizer(analyzer=analyzer,
+                                  ngram_range=(n_begin,n_end),
+                                  max_features=max_features,
+                                  stop_words="english").fit(text)
+    return counter.get_feature_names()
+
+#transforms the text to a tfidf document and returns it
+def tfidf_transform(text,feature_words):
+    count_vector = txt.CountVectorizer()
+    vectorized = count_vector.fit(text)
+    #transforms into tfidf
+    tfidf = txt.TfidfTransformer().fit(vectorized)
+    vectorized_tfidf = tfidf.transform(vectorized)
+
+    if feature_words:
+        return tfidf.get_feature_names()
+    else:
+        return vectorized_tfidf
+
+
+
 
 
 
